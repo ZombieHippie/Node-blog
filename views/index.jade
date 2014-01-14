@@ -1,0 +1,14 @@
+extends layout
+
+block content
+	style
+		.b{background:#61AAE4}
+		.y{background:#D4DF5D; color:black}
+	.row
+		.col-xs-12.b
+			table.table
+				for user, name in users
+					tr
+						td=name
+						td=user.group
+						td=user.health

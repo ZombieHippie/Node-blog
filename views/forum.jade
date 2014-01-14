@@ -1,0 +1,15 @@
+extends layout
+
+block content
+	style
+		.b{background:#61AAE4}
+		.y{background:#D4DF5D; color:black}
+	div.container
+		.row
+			table.table
+				for post, topic in forum
+					tr
+						td.y=topic
+						td=post.author
+						td=post.lastpost
+				
