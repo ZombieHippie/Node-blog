@@ -1,10 +1,17 @@
 connect = require('connect')
 express = require('express')
 http = require('http')
-port = process.env.PORT || 8081
+mongoose = require('mongoose')
+async = require 'async'
+port = process.env.PORT || 8082
+
+# Setup MongoDB
+mongoose.connect 'mongodb://localhost/blog'
+
+Post = mongoose.model 'Post', {title: String, content: String, date: Date}
 
 # Setup Express
-server = express.createServer();
+server = express()
 server.configure ()->
 	server.set('views', __dirname + '/views')
 	server.set('view options', { layout: false })
@@ -13,27 +20,25 @@ server.configure ()->
 	server.use(express.session({ secret: "shhhhhhhhh!"}))
 	server.use(connect.static(__dirname + '/static'))
 	server.use(server.router) #need to be explicit, (automatically adds it if you forget)
+	server.locals.pretty = true;
 
 
 #setup the errors
-server.error (err, req, res, next)->
+# This doesn't do anything yet because of changes in express
+error = (err, req, res, next)->
 		if (err instanceof NotFound)
-			res.render '404.jade', \
-				locals:
+			res.render '404.jade', {
 					title: '404 - Not Found'
 					description: ''
 					author: ''
-					analyticssiteid: 'XXXXXXX' 
-				status: 404
+					analyticssiteid: 'XXXXXXX'}
 		else
-			res.render '500.jade', \
-				locals:
+			res.render '500.jade', {
 					title: 'The Server Encountered an Error'
 					description: ''
 					author: ''
 					analyticssiteid: 'XXXXXXX'
-					error: err
-				status: 500
+					error: err}
 
 
 #///////////////////////////////////////////
@@ -42,51 +47,41 @@ server.error (err, req, res, next)->
 
 #/////// ADD ALL YOUR ROUTES HERE  /////////
 
-users=
-	AZombiePuppie:{group:"moderator",health:"8.7"}
-	AZombieHippie:{group:"admin",health:"8.7"}
+server.get '/blog/action/post', (req, res) ->
+	req.query['date'] = new Date()
+	newPost = new Post(req.query)
+	newPost.save((err)->
+		if(err)
+			res.redirect '/500'
+		else
+			res.redirect '/'	
+	)
 
-forum=
-	AZombiePuppie:{author:"moderator",lastpost:"8.7"}
-	AZombieHippie:{author:"admin",lastpost:"8.7"}
-
-
-server.get '/blog/post', (req,res) ->
-	res.render 'newpost.jade', \
-		locals:
-			title: 'New Post'
-			description: 'Your Page Description'
-			author: 'Your Name'
+server.get '/blog/write', (req,res) ->
+	res.render 'newpost.jade', {
+			title: 'Write new post'
+			description: 'Write a post for the node-blog'
+			author: 'Cole R Lawrence'
 			analyticssiteid: 'XXXXXXX'
-			sessionCookie: req.sessionID
-
-server.get '/blog', (req,res) ->
-	res.render 'forum.jade', \
-		locals:
-			title: 'Blog'
-			description: 'Your Page Description'
-			author: 'Your Name'
-			analyticssiteid: 'XXXXXXX'
-			sessionCookie: req.sessionID
-			forum:forum
+			sessionCookie: req.sessionID}
 
 server.get '/', (req,res) ->
-	res.render 'index.jade', \
-		locals:
+	postq = Post.find {}
+	postq.limit '10'
+	postq.sort '-date'
+	postq.exec().addCallback (success) =>
+		res.render 'blog.jade', {
 			title: 'Blog'
 			description: 'Your Page Description'
-			author: 'Your Name'
+			author: 'Cole R Lawrence'
 			analyticssiteid: 'XXXXXXX'
 			sessionCookie: req.sessionID
-			users:users
+			posts:success}
+
 
 #A Route for Creating a 500 Error (Useful to keep around)
 server.get '/500', (req, res) ->
 		throw new Error('This is a 500 Error')
-
-#The 404 Route (ALWAYS Keep this as the last route)
-server.get '/*', (req, res) ->
-		throw new NotFound
 
 NotFound = (msg)->
 		this.name = 'NotFound'

@@ -1,15 +1,17 @@
 extends layout
 
+mixin post(post)
+	tr
+		td.y=post.title
+		td=post.content
+		td=post.date
+
 block content
-	style
+	style.
 		.b{background:#61AAE4}
 		.y{background:#D4DF5D; color:black}
 	div.container
 		.row
 			table.table
-				for post, topic in forum
-					tr
-						td.y=topic
-						td=post.author
-						td=post.lastpost
-				
+				for post in posts
+					mixin post(post)
