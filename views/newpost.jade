@@ -5,7 +5,7 @@ block content
 		.b{background:#61AAE4}
 		.y{background:#D4DF5D; color:black}
 	h1 New post
-	form(role="form",action="/blog/action/post")
+	form(role="form",method="post")
 		.form-group
 			input.form-control(name="title",type="text",placeholder="Post title...")
 			textarea.form-control(name="content",style="resize:vertical")

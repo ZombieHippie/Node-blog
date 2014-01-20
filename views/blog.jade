@@ -2,14 +2,21 @@ extends layout
 
 mixin post(post)
 	tr
+		td
+			img(src="//minotar.net/avatar/#{post.user}/32")
+		td.b=post.user
 		td.y=post.title
 		td=post.content
 		td=post.date
 
 block content
-	style.
-		.b{background:#61AAE4}
-		.y{background:#D4DF5D; color:black}
+	style
+		:stylus
+			.b
+				background #61AAE4
+			.y
+				background:#D4DF5D
+				color:black
 	div.container
 		.row
 			table.table

@@ -1,0 +1,29 @@
+style
+	:stylus
+		#loading_progress
+			position fixed
+			top 0
+			bottom 0
+			right 0
+			left 0
+			background-color lightgray
+			z-index 2000
+			.loadingbox
+				position absolute
+				left 30%
+				right 30%
+				top 25%
+script
+	:coffee
+		$().ready ->
+			$('#loading_progress .progress-bar').css(width:'100%')
+			$('#loading_progress').delay(200).fadeOut()
+
+
+#loading_progress
+	.loadingbox
+		h3 Loading
+		.progress
+			.progress-bar(role="progressbar",
+				aria-valuenow="60",aria-valuemin="0",
+				aria-valuemax="100",style="width:0%")

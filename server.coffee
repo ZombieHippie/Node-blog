@@ -86,15 +86,22 @@ server.get '/blog/write', (req,res) ->
 			user: req.session.user}
 
 server.post '/blog/write', (req,res) ->
-	if(req.query.title? and req.query.content?)
-		req.query['date'] = new Date()
-		newPost = new Post(req.query)
+	q = {
+		title : req.body.title
+		content : req.body.content
+		user : req.session.user.name
+		date : new Date()
+	}
+	if(q.title and q.content)
+		newPost = new Post(q)
 		newPost.save (err)->
+			console.log {err}
 			if(err)
 				res.redirect '/500'
 			else
-				res.redirect '/'
+				res.redirect '/blog'
 	else
+		console.log 
 		res.redirect '/500'
 
 server.get '/blog/login', (req,res) ->
@@ -155,11 +162,25 @@ server.get '/blog/logout', (req, res)->
 	req.session.destroy ->
 		res.redirect('/')
 
-server.get '/', (req,res) ->
+server.get '/blog', (req,res) ->
 	console.log req.session
 	postq = Post.find {}
 	postq.limit '10'
-	postq.sort '-post_date'
+	postq.sort '-date'
+	postq.exec().addCallback (success) =>
+		res.render 'blog.jade', {
+			title: '=INKBLUR='
+			description: 'The inkblur server monitor'
+			author: 'Cole R Lawrence'
+			analyticssiteid: 'XXXXXXX'
+			posts:success
+			user: req.session.user}
+
+server.get '/', (req,res) ->
+	console.log req.session
+	postq = Player.find {}
+	postq.limit '10'
+	postq.sort '-last_seen'
 	postq.exec().addCallback (success) =>
 		res.render 'players.jade', {
 			title: '=INKBLUR='
