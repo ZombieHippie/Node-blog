@@ -12,3 +12,10 @@ header.navbar.navbar-fixed-top(role="banner").navbar-inverse
 						a(href="/") Blog
 					li
 						a(href="/blog/write") New Post
+					li
+						a(href="/blog/login") Login
+					li
+						a(href="/blog/logout") Logout
+					if(user && user.name)
+						li.pull-right(style="color:white")
+							a=user.name

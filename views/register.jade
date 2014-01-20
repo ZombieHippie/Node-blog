@@ -1,0 +1,12 @@
+extends layout
+
+block content
+	style
+		.b{background:#61AAE4}
+		.y{background:#D4DF5D; color:black}
+	h1 Register
+	form(role="form",method="POST")
+		.form-group
+			input.form-control(name="username",type="text",placeholder="Username")
+			input.form-control(name="password",type="password")
+			input.btn.btn-success.pull-right(type="submit",value="Register")

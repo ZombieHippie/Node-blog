@@ -1,0 +1,23 @@
+extends layout
+
+mixin player(player)
+	tr
+		td
+			img(src="//minotar.net/avatar/#{player.name}/32")
+		td=player.name
+		td=player.last_words
+
+block content
+	style.
+		.b{background:#61AAE4}
+		.y{background:#D4DF5D; color:black}
+	div.container
+		.row
+			h1 Players online
+			table.table.table-hover
+				//tr
+					th
+					th Username
+					th Last words
+				for player in players
+					mixin player(player)

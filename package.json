@@ -9,6 +9,7 @@
     "jade": "*",
     "mongoose": "*",
     "coffee-script": "*",
+    "devreload": "0.0.4",
     "async": "*"
   },
   "devDependencies": {
